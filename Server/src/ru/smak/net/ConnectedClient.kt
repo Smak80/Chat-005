@@ -27,7 +27,9 @@ class ConnectedClient(val client: Socket) {
         if (name == null) {
             if (clients.find{it.name == msg} == null) {
                 name = msg
-                broadcast(Command.MESSAGE, "Пользователь $name зашел в чат!")
+                name?.also{
+                    broadcast(Command.LOGGED_IN, it)
+                }
             } else {
                 send(Command.INTRODUCE, "Имя занято, введите другое")
             }
@@ -37,13 +39,18 @@ class ConnectedClient(val client: Socket) {
     }
     fun start(){
         thread {
-            chio.startReceiving{
-                try {
-                    parse(it)
-                } catch (e: Exception){
-                    clients.remove(this)
-                    name?.let { broadcast(Command.LOGGED_OUT, it) }
+            try {
+                chio.startReceiving {
+                    try {
+                        parse(it)
+                    } catch (e: Exception) {
+                        clients.remove(this)
+                        name?.let { broadcast(Command.LOGGED_OUT, it) }
+                    }
                 }
+            } catch (e: Exception) {
+                clients.remove(this)
+                name?.let { broadcast(Command.LOGGED_OUT, it) }
             }
         }
     }

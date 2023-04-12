@@ -38,10 +38,11 @@ class Client(
                     ui.showMessage(message)
                 }
                 Command.LOGGED_IN ->{
-
+                    ui.showMessage("Пользователь $message зашел в чат")
+                    ui.showComment("Введите сообщение: ")
                 }
                 Command.LOGGED_OUT ->{
-                    ui.showMessage("Пользователь $msg нас покинул ;-(")
+                    ui.showMessage("Пользователь $message нас покинул ;-(")
                 }
             }
 
