@@ -3,19 +3,25 @@ package ru.smak.ui
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class ConsoleUI {
+class ConsoleUI : UI {
     private val br = BufferedReader(InputStreamReader(System.`in`))
     private var isActive = true
-    fun startReceiving(parse: (String)->Unit){
+    fun startReceiving(){
         isActive = true
         while (isActive){
-            parse(br.readLine())
+            receiver?.invoke(br.readLine())
         }
     }
 
-    fun showMessage(msg: String){
+    override fun showMessage(msg: String){
         println(msg)
     }
+
+    override fun showComment(cmt: String) {
+        println(cmt)
+    }
+
+    override var receiver: ((String) -> Unit)? = null
 
     fun stop(){
         isActive = false

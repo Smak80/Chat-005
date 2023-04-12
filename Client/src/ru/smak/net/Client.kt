@@ -1,12 +1,22 @@
 package ru.smak.net
 
+import ru.smak.ui.UI
 import java.net.Socket
 import kotlin.concurrent.thread
 
-class Client(host: String = "127.0.0.1", port: Int = 5005) {
+class Client(
+    host: String = "127.0.0.1",
+    port: Int = 5005,
+    val ui  : UI
+) {
 
     private val s: Socket = Socket(host, port)
     private val chio = ChatIO(s)
+    init{
+        ui.receiver = ::sendMessage
+    }
+
+
     fun start(){
         thread {
             chio.startReceiving(::parse)
@@ -18,6 +28,17 @@ class Client(host: String = "127.0.0.1", port: Int = 5005) {
     }
 
     private fun parse(msg: String){
-        println(msg)
+        val (strCommand, message) = msg.split(":", limit = 2)
+        try {
+            when (Command.valueOf(strCommand)) {
+                Command.INTRODUCE -> {
+                    ui.showComment(message)
+                }
+                Command.MESSAGE -> {
+                    ui.showMessage(message)
+                }
+            }
+
+        } catch (_:Throwable) {}
     }
 }

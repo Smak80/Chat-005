@@ -5,12 +5,11 @@ import ru.smak.ui.ConsoleUI
 import kotlin.concurrent.thread
 
 fun main() {
-    Client().also {c ->
-        c.start()
+    ConsoleUI().apply{
         thread {
-            ConsoleUI().startReceiving {
-                c.sendMessage(it)
-            }
+            startReceiving()
         }
+    }.also {
+        Client(ui = it).start()
     }
 }
