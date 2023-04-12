@@ -37,7 +37,14 @@ class ConnectedClient(val client: Socket) {
     }
     fun start(){
         thread {
-            chio.startReceiving(::parse)
+            chio.startReceiving{
+                try {
+                    parse(it)
+                } catch (e: Exception){
+                    clients.remove(this)
+                    name?.let { broadcast(Command.LOGGED_OUT, it) }
+                }
+            }
         }
     }
 }

@@ -37,6 +37,12 @@ class Client(
                 Command.MESSAGE -> {
                     ui.showMessage(message)
                 }
+                Command.LOGGED_IN ->{
+
+                }
+                Command.LOGGED_OUT ->{
+                    ui.showMessage("Пользователь $msg нас покинул ;-(")
+                }
             }
 
         } catch (_:Throwable) {}
